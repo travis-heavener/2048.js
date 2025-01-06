@@ -1,0 +1,26 @@
+*, html {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    width: 100vw;
+    height: 100vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 100vw;
+    min-height: 100vh;
+
+    background-color: #333;
+}
+
+canvas {
+    background-color: #b9ada1;
+    box-shadow: 0 0 48px #0005;
+}
