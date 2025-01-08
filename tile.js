@@ -29,7 +29,7 @@ class Tile {
 
         // Draw number
         ctx.fillStyle = getTextColor(this.value);
-        ctx.font = "650 " + getTextSize(this.value) + "px 'Open Sans'";
+        ctx.font = "650 " + getTextSize(this.value) + "px 'Open Sans', Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.value, this.#x + dims.tile / 2, this.#y + dims.tile * 0.525);

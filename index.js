@@ -5,7 +5,7 @@
 /************** START CONF **************/
 
 const CONF = {
-    "frametimeMS": 1e3/60,
+    "frametimeMS": 1e3/75,
     "animMS": 100 // how long an animation takes visually & locks user input
 };
 Object.freeze(CONF);
@@ -48,12 +48,7 @@ $(document).ready(() => {
     $(canvas).css({"width": canvas.width, "height": canvas.height, "borderRadius": dims.borderRadius * 100 + "%"});
 
     // Bind keyboard evts
-    $(window).on("keydown", (e) => {
-        if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "ArrowUp") {
-            e.preventDefault();
-            interceptMove(e.key[5] === "L" ? LEFT : e.key[5] === "D" ? DOWN : e.key[5] === "R" ? RIGHT : UP);
-        }
-    });
+    bindKeyEvts();
 
     // Initialize game
     init();
@@ -185,6 +180,9 @@ function interceptMove(direction) {
             break;
         }
     }
+
+    // Invoke tick cycle
+    tick();
 }
 
 function init() {
@@ -196,15 +194,15 @@ function init() {
     // Place two initial tiles
     genTile(); genTile();
 
-    // Start interval
-    __gameInterval = setInterval(() => tick(), CONF.frametimeMS);
+    // Initial render
+    renderFrame();
 }
 
 function endGame(isSuccess) {
     // TODO: Reveal win/loss screen
 
-    // Clear game interval
-    clearInterval(__gameInterval);
+    // Unbind key listeners
+    unbindKeyEvts();
 }
 
 // Create a new tile in an open space, throws an Error when full
@@ -233,6 +231,8 @@ function genTile() {
 }
 
 function tick() {
+    const startMS = Date.now();
+
     // Handle animation mode
     if (__animStart !== null) {
         // Process animation tick
@@ -260,7 +260,6 @@ function tick() {
                 genTile();
             } catch (e) {
                 // End failure
-                console.warn("Game over (failure)");
                 endGame(false);
             }
         }
@@ -268,6 +267,23 @@ function tick() {
 
     // Update frame
     renderFrame();
+
+    // Check for a win condition
+    winCheck:
+    for (const row of grid) {
+        for (const tile of row) {
+            if (tile.value === 2048) {
+                endGame(true);
+                break winCheck;
+            }
+        }
+    }
+
+    // If still in an animation, queue another tick
+    if (__animStart !== null) {
+        const elapsedMS = Date.now() - startMS;
+        setTimeout(() => tick(), Math.max(CONF.frametimeMS - elapsedMS, 0));
+    }
 }
 
 /**************  END GAME FUNCTION  **************/

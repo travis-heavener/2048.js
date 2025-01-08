@@ -27,3 +27,16 @@ function getTextSize(n) {
 Array.prototype.clear = function() {
     while (this.length) this.shift();
 }
+
+function bindKeyEvts() {
+    $(window).on("keydown", (e) => {
+        if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "ArrowUp") {
+            e.preventDefault();
+            interceptMove(e.key[5] === "L" ? LEFT : e.key[5] === "D" ? DOWN : e.key[5] === "R" ? RIGHT : UP);
+        }
+    });
+}
+
+function unbindKeyEvts() {
+    $(window).off("keydown");
+}
