@@ -86,7 +86,7 @@ canvas {
     background-color: var(--end-color);
     
     position: absolute;
-    animation: fadeIn 300ms;
+    animation: fadeIn 1s;
 }
 
 .end-overlay > h1 {

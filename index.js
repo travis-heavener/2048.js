@@ -7,8 +7,7 @@
 const CONF = {
     "frametimeMS": 1e3/90,
     "animMS": 65, // how long an animation takes visually & locks user input
-    "endScreenMS": 300,
-    "endScreenOpacity": 0.75
+    "endScreenDelayMS": 150 // how long to wait after a loss before displaying the end screen
 };
 Object.freeze(CONF);
 
@@ -315,19 +314,21 @@ function endGame(isSuccess) {
         $("#best-score-readout").html(score);
     }
 
-    // Reveal win/loss screen
-    $("body").append(`
-        <div class="end-overlay ${isSuccess ? 'win-overlay' : ''}">
-            <h1>${isSuccess ? 'You win!' : 'Game over'}</h1>
-            <button onclick="restartGame()">Try again</button>
-        </div>
-    `);
+    // Reveal win/loss screen after delay
+    setTimeout(() => {
+        $("body").append(`
+            <div class="end-overlay ${isSuccess ? 'win-overlay' : ''}">
+                <h1>${isSuccess ? 'You win!' : 'Game over'}</h1>
+                <button onclick="restartGame()">Try again</button>
+            </div>
+        `);
 
-    $(".end-overlay").css({
-        "top": canvas.offsetTop, "left": canvas.offsetLeft,
-        "width": dims.canvas, "height": dims.canvas,
-        "borderRadius": dims.canvas * dims.borderRadius
-    });
+        $(".end-overlay").css({
+            "top": canvas.offsetTop, "left": canvas.offsetLeft,
+            "width": dims.canvas, "height": dims.canvas,
+            "borderRadius": dims.canvas * dims.borderRadius
+        });
+    }, CONF.endScreenDelayMS);
 }
 
 // Create a new tile in an open space, throws an Error when full
