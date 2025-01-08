@@ -52,6 +52,9 @@ $(document).ready(() => {
 function interceptMove(direction) {
     if (__animStart) return; // skip concurrent inputs
 
+    // Verify the direction has space to move
+    if (!isDirectionAvailable(direction)) return;
+
     // Update animation start
     __animStart = Date.now();
 
@@ -182,6 +185,83 @@ function interceptMove(direction) {
 
     // Invoke tick cycle
     tick();
+}
+
+// Returns true if there are adjacent tiles in the given direction that would combine or move
+function isDirectionAvailable(direction) {
+    switch (direction) {
+        case LEFT: {
+            // If there's a merge, push blank Tile
+            for (let r = 0; r < 4; ++r) {
+                let nextFreeCol = 0, prevValue = EMPTY;
+                for (let c = 0; c < 4; ++c) {
+                    // Skip empty tiles
+                    const value = grid[r][c].value;
+                    if (value === EMPTY) continue;
+
+                    // Check for space to move
+                    if (prevValue === value || c !== nextFreeCol) return true;
+                    ++nextFreeCol; // Otherwise, increment the free column
+                    prevValue = value;
+                }
+            }
+            break;
+        }
+        case RIGHT: {
+            // If there's a merge, push blank Tile
+            for (let r = 0; r < 4; ++r) {
+                let nextFreeCol = 3, prevValue = EMPTY;
+                for (let c = 3; c >= 0; --c) {
+                    // Skip empty tiles
+                    const value = grid[r][c].value;
+                    if (value === EMPTY) continue;
+
+                    // Check for space to move
+                    if (prevValue === value || c !== nextFreeCol) return true;
+                    --nextFreeCol; // Otherwise, increment the free column
+                    prevValue = value;
+                }
+            }
+            break;
+        }
+        case UP: {
+            // If there's a merge, push blank Tile
+            for (let c = 0; c < 4; ++c) {
+                let nextFreeRow = 0, prevValue = EMPTY;
+                for (let r = 0; r < 4; ++r) {
+                    // Skip empty tiles
+                    const value = grid[r][c].value;
+                    if (value === EMPTY) continue;
+
+                    // Check for space to move
+                    if (prevValue === value || r !== nextFreeRow) return true;
+                    ++nextFreeRow; // Otherwise, increment the free column
+                    prevValue = value;
+                }
+            }
+            break;
+        }
+        case DOWN: {
+            // If there's a merge, push blank Tile
+            for (let c = 0; c < 4; ++c) {
+                let nextFreeRow = 3, prevValue = EMPTY;
+                for (let r = 3; r >= 0; --r) {
+                    // Skip empty tiles
+                    const value = grid[r][c].value;
+                    if (value === EMPTY) continue;
+
+                    // Check for space to move
+                    if (prevValue === value || r !== nextFreeRow) return true;
+                    --nextFreeRow; // Otherwise, increment the free column
+                    prevValue = value;
+                }
+            }
+            break;
+        }
+    }
+
+    // Base case
+    return false;
 }
 
 function init() {
@@ -338,33 +418,9 @@ function checkEndCondition() {
     }
 
     // Check for loss condition (grid full & adjacents cannot merge)
-    let hasLost = true;
-    for (let r = 0; r < 4 && hasLost; ++r) {
-        for (let c = 0; c < 4 && hasLost; ++c) {
-            // If a tile is still empty, the game is not over
-            if (grid[r][c].value === EMPTY) {
-                hasLost = false;
-                break;
-            }
-        }
-    }
-
-    // If the grid is full, check adjacents
-    for (let r = 0; r < 4 && hasLost; ++r) {
-        for (let c = 0; c < 4 && hasLost; ++c) {
-            const value = grid[r][c].value;
-            if ((c > 0 && grid[r][c-1].value === value) ||
-                (r > 0 && grid[r-1][c].value === value) ||
-                (c < 3 && grid[r][c+1].value === value) ||
-                (r < 3 && grid[r+1][c].value === value)) {
-                    hasLost = false;
-                    break;
-                }
-        }
-    }
-
-    // Handle loss condition
-    if (hasLost) endGame(false);
+    if (!isDirectionAvailable(LEFT) && !isDirectionAvailable(RIGHT) &&
+        !isDirectionAvailable(UP) && !isDirectionAvailable(DOWN))
+        endGame(false);
 }
 
 /**************  END GAME FUNCTION  **************/
