@@ -219,10 +219,8 @@ function genTile() {
         }
     }
 
-    if (!validRows.length) {
-        console.log(validRows, grid);
-        throw Error("Grid full.");
-    }
+    // Abort tile generation if the grid is full
+    if (!validRows.length) return;
 
     // Select row
     const R = validRows[~~(Math.random() * validRows.length)];
@@ -273,21 +271,52 @@ function tick() {
     // Update frame
     renderFrame();
 
-    // Check for a win condition
-    winCheck:
-    for (const row of grid) {
-        for (const tile of row) {
-            if (tile.value === 2048) {
-                endGame(true);
-                break winCheck;
-            }
-        }
-    }
-
     // If still in an animation, queue another tick
     if (__animStart !== null) {
         const elapsedMS = Date.now() - startMS;
         setTimeout(() => tick(), Math.max(CONF.frametimeMS - elapsedMS, 0));
+    } else {
+        // Otherwise, check for win/loss
+
+        // Check for a win condition
+        winCheck:
+        for (const row of grid) {
+            for (const tile of row) {
+                if (tile.value === 2048) {
+                    endGame(true);
+                    break winCheck;
+                }
+            }
+        }
+
+        // Check for loss condition (grid full & adjacents cannot merge)
+        let hasLost = true;
+        for (let r = 0; r < 4 && hasLost; ++r) {
+            for (let c = 0; c < 4 && hasLost; ++c) {
+                // If a tile is still empty, the game is not over
+                if (grid[r][c].value === EMPTY) {
+                    hasLost = false;
+                    break;
+                }
+            }
+        }
+
+        // If the grid is full, check adjacents
+        for (let r = 0; r < 4 && hasLost; ++r) {
+            for (let c = 0; c < 4 && hasLost; ++c) {
+                const value = grid[r][c].value;
+                if ((c > 0 && grid[r][c-1].value === value) ||
+                    (r > 0 && grid[r-1][c].value === value) ||
+                    (c < 3 && grid[r][c+1].value === value) ||
+                    (r < 3 && grid[r+1][c].value === value)) {
+                        hasLost = false;
+                        break;
+                    }
+            }
+        }
+
+        // Handle loss condition
+        if (hasLost) endGame(false);
     }
 }
 
