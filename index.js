@@ -198,9 +198,25 @@ function init() {
     renderFrame();
 }
 
+function restartGame() {
+    // Reset keybinds
+    bindKeyEvts();
+
+    // Reset grid
+    grid.clear();
+    for (let r = 0; r < 4; ++r) {
+        grid.push([
+            new Tile(r, 0, EMPTY), new Tile(r, 1, EMPTY), new Tile(r, 2, EMPTY), new Tile(r, 3, EMPTY)
+        ]);
+    }
+
+    // Invoke init function
+    init();
+}
+
 function endGame(isSuccess) {
     // TODO: Reveal win/loss screen
-    console.warn("Game over");
+    console.warn("Game over. Success: " + isSuccess);
 
     // Unbind key listeners
     unbindKeyEvts();
@@ -277,47 +293,50 @@ function tick() {
         setTimeout(() => tick(), Math.max(CONF.frametimeMS - elapsedMS, 0));
     } else {
         // Otherwise, check for win/loss
+        checkEndCondition();
+    }
+}
 
-        // Check for a win condition
-        winCheck:
-        for (const row of grid) {
-            for (const tile of row) {
-                if (tile.value === 2048) {
-                    endGame(true);
-                    break winCheck;
-                }
+function checkEndCondition() {
+    // Check for a win condition
+    winCheck:
+    for (const row of grid) {
+        for (const tile of row) {
+            if (tile.value === 2048) {
+                endGame(true);
+                break winCheck;
             }
         }
+    }
 
-        // Check for loss condition (grid full & adjacents cannot merge)
-        let hasLost = true;
-        for (let r = 0; r < 4 && hasLost; ++r) {
-            for (let c = 0; c < 4 && hasLost; ++c) {
-                // If a tile is still empty, the game is not over
-                if (grid[r][c].value === EMPTY) {
+    // Check for loss condition (grid full & adjacents cannot merge)
+    let hasLost = true;
+    for (let r = 0; r < 4 && hasLost; ++r) {
+        for (let c = 0; c < 4 && hasLost; ++c) {
+            // If a tile is still empty, the game is not over
+            if (grid[r][c].value === EMPTY) {
+                hasLost = false;
+                break;
+            }
+        }
+    }
+
+    // If the grid is full, check adjacents
+    for (let r = 0; r < 4 && hasLost; ++r) {
+        for (let c = 0; c < 4 && hasLost; ++c) {
+            const value = grid[r][c].value;
+            if ((c > 0 && grid[r][c-1].value === value) ||
+                (r > 0 && grid[r-1][c].value === value) ||
+                (c < 3 && grid[r][c+1].value === value) ||
+                (r < 3 && grid[r+1][c].value === value)) {
                     hasLost = false;
                     break;
                 }
-            }
         }
-
-        // If the grid is full, check adjacents
-        for (let r = 0; r < 4 && hasLost; ++r) {
-            for (let c = 0; c < 4 && hasLost; ++c) {
-                const value = grid[r][c].value;
-                if ((c > 0 && grid[r][c-1].value === value) ||
-                    (r > 0 && grid[r-1][c].value === value) ||
-                    (c < 3 && grid[r][c+1].value === value) ||
-                    (r < 3 && grid[r+1][c].value === value)) {
-                        hasLost = false;
-                        break;
-                    }
-            }
-        }
-
-        // Handle loss condition
-        if (hasLost) endGame(false);
     }
+
+    // Handle loss condition
+    if (hasLost) endGame(false);
 }
 
 /**************  END GAME FUNCTION  **************/
