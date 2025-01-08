@@ -40,3 +40,30 @@ function bindKeyEvts() {
 function unbindKeyEvts() {
     $(window).off("keydown");
 }
+
+function adjustViewport() {
+    // Calculate canvas dimensions
+    const vw = window.innerWidth / 100;
+    const vh = window.innerHeight / 100;
+
+    dims.canvas = ~~Math.min(75 * vw, 65 * vh);
+    dims.padding = 0.032 * dims.canvas;
+    dims.tile = 0.21 * dims.canvas;
+    dims.tileRadius = (dims.canvas - dims.padding) * dims.borderRadius;
+
+    // Update canvas dimensions
+    const oldCanvasWidth = canvas.width;
+    canvas.width = canvas.height = dims.canvas;
+    $(canvas).css({"width": canvas.width, "height": canvas.height, "borderRadius": dims.borderRadius * 100 + "%"});
+
+    // Update each tile's position
+    const scale = canvas.width / oldCanvasWidth;
+    for (let row of grid) {
+        for (let tile of row) {
+            tile.rescale(scale);
+        }
+    }
+
+    // Rerender the frame
+    renderFrame();
+}

@@ -9,13 +9,22 @@ class Tile {
         this.row = row;
         this.col = col;
         this.value = value;
-        this.#recalcPos();
+        this.recalcPos();
     }
 
-    #recalcPos() {
+    recalcPos() {
         // Calculate coordinates
         this.#x = dims.padding + (dims.tile + dims.padding) * this.col;
         this.#y = dims.padding + (dims.tile + dims.padding) * this.row;
+    }
+
+    rescale(scale) {
+        // Recalculate the position
+        this.recalcPos();
+
+        // Adjust the coordinates when the viewport changes
+        this.#animDX *= scale;
+        this.#animDY *= scale;
     }
 
     draw(ctx) {

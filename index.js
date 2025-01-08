@@ -36,25 +36,17 @@ const dims = {
 };
 
 $(document).ready(() => {
-    // Calculate canvas dimensions
-    const vw = window.innerWidth / 100;
-    const vh = window.innerHeight / 100;
-
-    dims.canvas = ~~Math.min(75 * vw, 65 * vh);
-    dims.padding = 0.032 * dims.canvas;
-    dims.tile = 0.21 * dims.canvas;
-    dims.tileRadius = (dims.canvas - dims.padding) * dims.borderRadius;
-    Object.freeze(dims);
-
-    // Update canvas dimensions
-    canvas.width = canvas.height = dims.canvas;
-    $(canvas).css({"width": canvas.width, "height": canvas.height, "borderRadius": dims.borderRadius * 100 + "%"});
+    // Initial viewport adjustment
+    adjustViewport();
 
     // Bind keyboard evts
     bindKeyEvts();
 
     // Initialize game
     init();
+
+    // Bind viewport change events
+    $(window).on("resize", () => adjustViewport());
 });
 
 function interceptMove(direction) {
