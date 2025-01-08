@@ -9,6 +9,8 @@ html {
 }
 
 body {
+    --canvas-size: min(75vw, 65vh);
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -25,46 +27,116 @@ body {
     justify-content: space-between;
     align-items: flex-start;
 
-    --width: min(75vw, 65vh);
     width: min(75vw, 65vh);
 
-    margin-bottom: calc(0.025 * var(--width));
+    margin-bottom: calc(0.025 * var(--canvas-size));
 }
 
-h1 {
+#info-div h1 {
     color: #736a62;
     font-family: "Open Sans", Arial;
-    font-size: calc(0.145 * var(--width));
+    font-size: calc(0.145 * var(--canvas-size));
     font-weight: 725;
     letter-spacing: 0.03em;
     line-height: 1.15em;
 }
 
-h2 {
+#info-div h2 {
     display: inline-block;
-    width: calc(0.2 * var(--width));
+    width: calc(0.2 * var(--canvas-size));
     
     background-color: #bcafa1;
-    border: calc(0.01 * var(--width)) solid #bcafa1;
-    border-radius: calc(0.0125 * var(--width));
+    border: calc(0.01 * var(--canvas-size)) solid #bcafa1;
+    border-radius: calc(0.0125 * var(--canvas-size));
     
     color: #f5f5f5;
     font-family: "Open Sans", Arial;
-    font-size: calc(0.03 * var(--width));
+    font-size: calc(0.03 * var(--canvas-size));
     font-weight: 725;
     line-height: 1.35em;
     text-align: center;
 }
 
-h2 > span {
-    font-size: calc(0.04 * var(--width));
+#info-div h2 > span {
+    font-size: calc(0.04 * var(--canvas-size));
 }
 
-h2:last-of-type {
+#info-div h2:last-of-type {
     margin-left: 0.1em;
 }
 
 canvas {
     background-color: #b9ada1;
     box-shadow: 0 0 48px #0005;
+}
+
+/************** OVERLAYS **************/
+
+.end-overlay {
+    --base-color: #f5f5f500;
+    --end-color: #f5f5f5bf;
+    --text-color: #736a62;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 5%;
+
+    background-color: var(--end-color);
+    
+    position: absolute;
+    animation: fadeIn 300ms;
+}
+
+.end-overlay > h1 {
+    color: var(--text-color);
+    font-family: "Open Sans", Arial;
+    font-size: calc(0.09 * var(--canvas-size));
+    font-weight: 725;
+    letter-spacing: 0.03em;
+    line-height: 1.15em;
+    text-shadow: 0.03em 0.03em 0.03em #0004;
+}
+
+.win-overlay {
+    --base-color: #fecf3100;
+    --end-color: #ffee034f;
+    --text-color: #f5f5f5;
+}
+
+.win-overlay > h1 {
+    font-size: calc(0.1 * var(--canvas-size));
+    text-shadow: 0.05em 0.05em 0.1em #0006;
+}
+
+.end-overlay > button {
+    padding: 0.35em 0.6em 0.45em 0.6em;
+    
+    background-color: #8a7b6a;
+    border: none;
+    border-radius: 0.33em;
+    
+    color: #f5f5f5;
+    font-family: "Open Sans", Arial;
+    font-size: calc(0.03 * var(--canvas-size));
+    font-weight: 725;
+    letter-spacing: 0.03em;
+    
+    cursor: pointer;
+    transition: 0.15s background-color;
+}
+
+.end-overlay > button:hover { background-color: #9c9185; }
+.end-overlay > button:active { background-color: #7e756c; }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        background-color: var(--base-color);
+    }
+    to {
+        opacity: 1;
+        background-color: var(--end-color);
+    }
 }

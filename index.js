@@ -6,7 +6,9 @@
 
 const CONF = {
     "frametimeMS": 1e3/90,
-    "animMS": 65 // how long an animation takes visually & locks user input
+    "animMS": 65, // how long an animation takes visually & locks user input
+    "endScreenMS": 300,
+    "endScreenOpacity": 0.75
 };
 Object.freeze(CONF);
 
@@ -207,6 +209,9 @@ function init() {
 }
 
 function restartGame() {
+    // Hide overlays
+    $(".end-overlay").remove();
+
     // Reset keybinds
     bindKeyEvts();
 
@@ -226,9 +231,6 @@ function restartGame() {
 }
 
 function endGame(isSuccess) {
-    // TODO: Reveal win/loss screen
-    console.warn("Game over. Success: " + isSuccess);
-
     // Unbind key listeners
     unbindKeyEvts();
 
@@ -240,6 +242,20 @@ function endGame(isSuccess) {
         // Update best score display
         $("#best-score-readout").html(score);
     }
+
+    // Reveal win/loss screen
+    $("body").append(`
+        <div class="end-overlay ${isSuccess ? 'win-overlay' : ''}">
+            <h1>${isSuccess ? 'You win!' : 'Game over'}</h1>
+            <button onclick="restartGame()">Try again</button>
+        </div>
+    `);
+
+    $(".end-overlay").css({
+        "top": canvas.offsetTop, "left": canvas.offsetLeft,
+        "width": dims.canvas, "height": dims.canvas,
+        "borderRadius": dims.canvas * dims.borderRadius
+    });
 }
 
 // Create a new tile in an open space, throws an Error when full
