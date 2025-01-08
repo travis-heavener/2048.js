@@ -5,8 +5,8 @@
 /************** START CONF **************/
 
 const CONF = {
-    "frametimeMS": 1e3/30,
-    "animMS": 500 // how long an animation takes visually & locks user input
+    "frametimeMS": 1e3/60,
+    "animMS": 100 // how long an animation takes visually & locks user input
 };
 Object.freeze(CONF);
 
@@ -217,7 +217,7 @@ function genTile() {
         validRows.splice(validRows.indexOf(R), 1); // Pop invalid row
         R = ~~(Math.random() * validRows.length);
     }
-    
+
     if (!validRows.length)
         throw Error("Grid full.");
     
@@ -234,7 +234,7 @@ function genTile() {
 
 function tick() {
     // Handle animation mode
-    if (__animStart !== null && Date.now() - __animStart > CONF.animMS) {
+    if (__animStart !== null) {
         // Process animation tick
         let hasFinishedAnim = false;
         for (let row of grid)
@@ -276,6 +276,18 @@ function tick() {
 function renderFrame() {
     // Clear the canvas
     ctx.clearRect(0, 0, dims.canvas, dims.canvas);
+
+    // Draw the tile background
+    for (let r = 0; r < 4; ++r) {
+        const y = dims.padding + (dims.tile + dims.padding) * r;
+        for (let c = 0; c < 4; ++c) {
+            const x = dims.padding + (dims.tile + dims.padding) * c;
+            ctx.fillStyle = getColor(EMPTY);
+            ctx.beginPath();
+            ctx.roundRect(x, y, dims.tile, dims.tile, dims.tileRadius);
+            ctx.fill();
+        }
+    }
 
     // Render all the tiles
     for (let row of grid)

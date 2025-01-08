@@ -3,7 +3,7 @@ class Tile {
     #y;
     #animDX; // distance traveled by each animation frame
     #animDY; // distance traveled by each animation frame
-    #framesRemaining;
+    #framesRemaining = 0;
 
     constructor(row, col, value) {
         this.row = row;
@@ -19,13 +19,13 @@ class Tile {
     }
 
     draw(ctx) {
+        if (!this.value) return;
+
         // Fill the tile
         ctx.fillStyle = getColor(this.value);
         ctx.beginPath();
         ctx.roundRect(this.#x, this.#y, dims.tile, dims.tile, dims.tileRadius);
         ctx.fill();
-
-        if (!this.value) return;
 
         // Draw number
         ctx.fillStyle = getTextColor(this.value);
@@ -39,15 +39,17 @@ class Tile {
         let xf = dims.padding + (dims.tile + dims.padding) * cf;
         let yf = dims.padding + (dims.tile + dims.padding) * rf;
 
-        this.#animDX = (xf - this.x) / frames;
-        this.#animDY = (yf - this.y) / frames;
+        this.#animDX = Math.round((xf - this.#x) * 1e3) / 1e3 / frames;
+        this.#animDY = Math.round((yf - this.#y) * 1e3) / 1e3 / frames;
         this.#framesRemaining = frames;
     }
 
     // Returns true after the last frame of the animation
     animTick() {
-        this.#x += this.#animDX;
-        this.#y += this.#animDY;
+        if (this.value !== EMPTY) {
+            this.#x += this.#animDX;
+            this.#y += this.#animDY;
+        }
         return !(--this.#framesRemaining);
     }
 }
