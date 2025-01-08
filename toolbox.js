@@ -64,6 +64,13 @@ function adjustViewport() {
         }
     }
 
+    // Adjust overlays
+    $(".end-overlay").css({
+        "top": canvas.offsetTop, "left": canvas.offsetLeft,
+        "width": dims.canvas, "height": dims.canvas,
+        "borderRadius": dims.canvas * dims.borderRadius
+    });
+
     // Rerender the frame
     renderFrame();
 }
