@@ -408,12 +408,11 @@ function tick() {
 
 function checkEndCondition() {
     // Check for a win condition
-    winCheck:
     for (const row of grid) {
         for (const tile of row) {
             if (tile.value === 2048) {
                 endGame(true);
-                break winCheck;
+                return;
             }
         }
     }
