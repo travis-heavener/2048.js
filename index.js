@@ -5,8 +5,8 @@
 /************** START CONF **************/
 
 const CONF = {
-    "frametimeMS": 1e3/75,
-    "animMS": 100 // how long an animation takes visually & locks user input
+    "frametimeMS": 1e3/90,
+    "animMS": 65 // how long an animation takes visually & locks user input
 };
 Object.freeze(CONF);
 
