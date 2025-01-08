@@ -200,6 +200,7 @@ function init() {
 
 function endGame(isSuccess) {
     // TODO: Reveal win/loss screen
+    console.warn("Game over");
 
     // Unbind key listeners
     unbindKeyEvts();
@@ -207,24 +208,33 @@ function endGame(isSuccess) {
 
 // Create a new tile in an open space, throws an Error when full
 function genTile() {
-    // Select row
-    const validRows = [0, 1, 2, 3];
-    let R = ~~(Math.random() * validRows.length);
-
-    while (validRows.length && grid[R][0].value && grid[R][1].value && grid[R][2].value && grid[R][3].value) {
-        validRows.splice(validRows.indexOf(R), 1); // Pop invalid row
-        R = ~~(Math.random() * validRows.length);
+    // Find all valid rows
+    const validRows = [];
+    for (let r = 0; r < 4; ++r) {
+        for (let c = 0; c < 4; ++c) {
+            if (grid[r][c].value === EMPTY) {
+                validRows.push(r);
+                break;
+            }
+        }
     }
 
-    if (!validRows.length)
+    if (!validRows.length) {
+        console.log(validRows, grid);
         throw Error("Grid full.");
-    
+    }
+
+    // Select row
+    const R = validRows[~~(Math.random() * validRows.length)];
+
+    // Find all valid cols
+    const validCols = [];
+    for (let c = 0; c < 4; ++c)
+        if (grid[R][c].value === EMPTY)
+            validCols.push(c);
+
     // Select column
-    const validCols = [0, 1, 2, 3];
-    let C;
-    do {
-        C = ~~(Math.random() * validCols.length);
-    } while (grid[R][C].value);
+    const C = validCols[~~(Math.random() * validCols.length)];
 
     // Place new tile
     grid[R][C].value = (Math.random() > 0.9) ? 4 : 2;
@@ -256,12 +266,7 @@ function tick() {
             }
 
             // Place new tile
-            try {
-                genTile();
-            } catch (e) {
-                // End failure
-                endGame(false);
-            }
+            genTile();
         }
     }
 
