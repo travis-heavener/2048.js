@@ -19,6 +19,7 @@ const ctx = canvas.getContext("2d");
 let __gameInterval;
 let __animStart = null;
 
+let score = 0;
 const EMPTY = 0;
 const LEFT = 0, DOWN = 1, RIGHT = 2, UP = 3;
 const grid = [[], [], [], []];
@@ -81,6 +82,7 @@ function interceptMove(direction) {
                     if (willCombine) {
                         --cf;
                         gridBuf[r][cf] = prevValue = tile.value * 2; // Update buffer
+                        score += prevValue; // Update user score
                         hasCombined = true; // Update the stored previous value
                     } else {
                         gridBuf[r][cf] = prevValue = tile.value; // Update buffer
@@ -110,6 +112,7 @@ function interceptMove(direction) {
                     if (willCombine) {
                         ++cf;
                         gridBuf[r][cf] = prevValue = tile.value * 2; // Update buffer
+                        score += prevValue; // Update user score
                         hasCombined = true; // Update the stored previous value
                     } else {
                         gridBuf[r][cf] = prevValue = tile.value; // Update buffer
@@ -139,6 +142,7 @@ function interceptMove(direction) {
                     if (willCombine) {
                         --rf;
                         gridBuf[rf][c] = prevValue = tile.value * 2; // Update buffer
+                        score += prevValue; // Update user score
                         hasCombined = true; // Update the stored previous value
                     } else {
                         gridBuf[rf][c] = prevValue = tile.value; // Update buffer
@@ -168,6 +172,7 @@ function interceptMove(direction) {
                     if (willCombine) {
                         ++rf;
                         gridBuf[rf][c] = prevValue = tile.value * 2; // Update buffer
+                        score += prevValue; // Update user score
                         hasCombined = true; // Update the stored previous value
                     } else {
                         gridBuf[rf][c] = prevValue = tile.value; // Update buffer
@@ -196,6 +201,9 @@ function init() {
 
     // Initial render
     renderFrame();
+
+    // Update best score display
+    $("#best-score-readout").html(localStorage.getItem("best-score") ?? 0);
 }
 
 function restartGame() {
@@ -210,6 +218,9 @@ function restartGame() {
         ]);
     }
 
+    // Reset user score
+    score = 0;
+
     // Invoke init function
     init();
 }
@@ -220,6 +231,15 @@ function endGame(isSuccess) {
 
     // Unbind key listeners
     unbindKeyEvts();
+
+    // Update best score
+    const currentBest = localStorage.getItem("best-score") ?? 0;
+    if (score > currentBest) {
+        localStorage.setItem("best-score", score);
+
+        // Update best score display
+        $("#best-score-readout").html(score);
+    }
 }
 
 // Create a new tile in an open space, throws an Error when full
@@ -362,6 +382,9 @@ function renderFrame() {
     for (let row of grid)
         for (let tile of row)
             tile.draw(ctx);
+
+    // Update stats display
+    $("#score-readout").html(score);
 }
 
 /**************  END RENDERER  **************/

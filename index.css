@@ -17,7 +17,51 @@ body {
     min-width: 100vw;
     min-height: 100vh;
 
-    background-color: #333;
+    background-color: #faf8ef;
+}
+
+#info-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    --width: min(75vw, 65vh);
+    width: min(75vw, 65vh);
+
+    margin-bottom: calc(0.025 * var(--width));
+}
+
+h1 {
+    color: #736a62;
+    font-family: "Open Sans", Arial;
+    font-size: calc(0.145 * var(--width));
+    font-weight: 725;
+    letter-spacing: 0.03em;
+    line-height: 1.15em;
+}
+
+h2 {
+    display: inline-block;
+    width: calc(0.2 * var(--width));
+    
+    background-color: #bcafa1;
+    border: calc(0.01 * var(--width)) solid #bcafa1;
+    border-radius: calc(0.0125 * var(--width));
+    
+    color: #f5f5f5;
+    font-family: "Open Sans", Arial;
+    font-size: calc(0.03 * var(--width));
+    font-weight: 725;
+    line-height: 1.35em;
+    text-align: center;
+}
+
+h2 > span {
+    font-size: calc(0.04 * var(--width));
+}
+
+h2:last-of-type {
+    margin-left: 0.1em;
 }
 
 canvas {
