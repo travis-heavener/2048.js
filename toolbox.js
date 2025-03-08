@@ -39,11 +39,13 @@ function bindKeyEvts() {
     // Bind mobile touch events
     const startPos = { x: null, y: null };
     $(window).on("touchstart", ({originalEvent: e}) => {
+        e.preventDefault();
         startPos.x = e.changedTouches[0].screenX;
         startPos.y = e.changedTouches[0].screenY;
     });
 
     $(window).on("touchend", ({originalEvent: e}) => {
+        e.preventDefault();
         if (startPos.x === null || startPos.y === null) return;
 
         // Determine displacement
@@ -69,7 +71,7 @@ function bindKeyEvts() {
 }
 
 function unbindKeyEvts() {
-    $(window).off("keydown");
+    $(window).off("keydown touchstart touchend");
 }
 
 function adjustViewport() {
