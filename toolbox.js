@@ -35,6 +35,37 @@ function bindKeyEvts() {
             interceptMove(e.key[5] === "L" ? LEFT : e.key[5] === "D" ? DOWN : e.key[5] === "R" ? RIGHT : UP);
         }
     });
+
+    // Bind mobile touch events
+    const startPos = { x: null, y: null };
+    $(window).on("touchstart", ({originalEvent: e}) => {
+        startPos.x = e.changedTouches[0].screenX;
+        startPos.y = e.changedTouches[0].screenY;
+    });
+
+    $(window).on("touchend", ({originalEvent: e}) => {
+        if (startPos.x === null || startPos.y === null) return;
+
+        // Determine displacement
+        const dx = e.changedTouches[0].screenX - startPos.x;
+        const dy = e.changedTouches[0].screenY - startPos.y;
+
+        // Determine direction
+        const theta = Math.atan2(dy, dx);
+
+        if (-3 * Math.PI / 4 <= theta && theta < -Math.PI / 4) {
+            interceptMove(UP);
+        } else if (-Math.PI / 4 <= theta && theta < Math.PI / 4) {
+            interceptMove(RIGHT);
+        } else if (Math.PI / 4 <= theta && 3 * Math.PI / 4) {
+            interceptMove(DOWN);
+        } else {
+            interceptMove(LEFT);
+        }
+
+        // Reset
+        startPos.x = startPos.y = 0;
+    });
 }
 
 function unbindKeyEvts() {
