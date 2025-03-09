@@ -11,3 +11,5 @@ I had initially made a basic version of 2048 (with some bugs) back in 2018, and 
 This version is fully polished to replicate the original 2048 feel and color scheme, as well as the UI layout.
 
 This project uses localStorage to store the user's best score, nothing fancy, given I was aiming to complete the entire thing in under 10 hours of working time (which I did).
+
+Play this 2048 remake yourself at [wowtravis.com/2048.js](https://wowtravis.com/2048.js)!
