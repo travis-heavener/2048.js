@@ -57,7 +57,7 @@ function bindKeyEvts() {
             interceptMove(UP);
         } else if (-Math.PI / 4 <= theta && theta < Math.PI / 4) {
             interceptMove(RIGHT);
-        } else if (Math.PI / 4 <= theta && 3 * Math.PI / 4) {
+        } else if (Math.PI / 4 <= theta && theta < 3 * Math.PI / 4) {
             interceptMove(DOWN);
         } else {
             interceptMove(LEFT);
